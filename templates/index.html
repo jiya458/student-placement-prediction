@@ -1,0 +1,813 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PlacementPredictor | AI Placement System</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: #101827;
+            color: #f8fafc;
+            line-height: 1.6;
+        }
+
+        :root {
+            --bg: #101827;
+            --panel: #202d40;
+            --border: #344258;
+            --muted: #a3afc2;
+            --blue: #647cf5;
+            --purple: #9858df;
+        }
+
+        .navbar {
+            height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 6%;
+            background: #0c1424;
+            border-bottom: 1px solid #26344a;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 19px;
+            font-weight: 800;
+            color: #8798ff;
+        }
+
+        .brand-icon {
+            font-size: 25px;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 28px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #d1d9e7;
+            font-size: 13px;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: #9b8bff;
+        }
+
+        .hero {
+            max-width: 1400px;
+            margin: auto;
+            min-height: 590px;
+            padding: 80px 6%;
+            display: grid;
+            grid-template-columns: 1.05fr 1fr;
+            gap: 55px;
+            align-items: center;
+            background:
+                radial-gradient(ellipse at 15% 10%, #263b5a 0%, transparent 50%),
+                linear-gradient(120deg, #172235, #26364b);
+        }
+
+        .hero-content {
+            max-width: 570px;
+        }
+
+        .eyebrow {
+            display: inline-block;
+            padding: 7px 13px;
+            margin-bottom: 22px;
+            background: #293753;
+            border: 1px solid #405173;
+            border-radius: 30px;
+            color: #a8b5ff;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        .hero h1 {
+            font-size: clamp(38px, 4.4vw, 58px);
+            line-height: 1.12;
+            font-weight: 850;
+            letter-spacing: -1.5px;
+            margin-bottom: 22px;
+        }
+
+        .gradient-text {
+            background: linear-gradient(90deg, #7792ff, #b06be9);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .hero-description {
+            color: var(--muted);
+            font-size: 15px;
+            max-width: 540px;
+            margin-bottom: 25px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            padding: 13px 8px;
+            text-align: center;
+            background: rgba(44, 59, 80, 0.85);
+            border: 1px solid #3a4960;
+            border-radius: 12px;
+        }
+
+        .stat-number {
+            font-size: 23px;
+            font-weight: 800;
+            color: #70d6bc;
+        }
+
+        .stat-card:nth-child(2) .stat-number {
+            color: #52d7f1;
+        }
+
+        .stat-card:nth-child(3) .stat-number {
+            color: #f4d56c;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: #d0d8e5;
+        }
+
+        .hero-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .btn {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            padding: 12px 20px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 750;
+            cursor: pointer;
+            transition: transform 0.2s, opacity 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            opacity: 0.9;
+        }
+
+        .btn-primary {
+            color: white;
+            background: linear-gradient(100deg, #617ef5, #9652d5);
+            box-shadow: 0 7px 22px rgba(105, 91, 235, 0.22);
+        }
+
+        .btn-outline {
+            color: #f1f5f9;
+            background: transparent;
+            border: 1px solid #8491a7;
+        }
+
+        .features {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .feature-card {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 20px;
+            min-height: 88px;
+            background: rgba(53, 68, 89, 0.72);
+            border: 1px solid #3d4d63;
+            border-radius: 15px;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateX(4px);
+            border-color: #7789c7;
+        }
+
+        .feature-icon {
+            width: 44px;
+            height: 44px;
+            flex-shrink: 0;
+            display: grid;
+            place-items: center;
+            border-radius: 12px;
+            background: #394966;
+            font-size: 21px;
+        }
+
+        .feature-card h3 {
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .feature-card p {
+            font-size: 12px;
+            color: #b9c4d5;
+        }
+
+        .section {
+            padding: 75px 6%;
+            max-width: 1250px;
+            margin: auto;
+        }
+
+        .section-heading {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .section-heading h2 {
+            font-size: clamp(27px, 3vw, 36px);
+            margin-bottom: 10px;
+        }
+
+        .section-heading p {
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .assessment-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.35fr) minmax(260px, 0.8fr);
+            gap: 25px;
+            align-items: start;
+        }
+
+        .panel {
+            background: #1b2739;
+            border: 1px solid #35445a;
+            border-radius: 18px;
+            padding: 30px;
+        }
+
+        .panel h3 {
+            font-size: 23px;
+            margin-bottom: 7px;
+        }
+
+        .panel-description {
+            color: var(--muted);
+            font-size: 13px;
+            margin-bottom: 25px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .field.full {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 13px;
+            background: #111c2c;
+            border: 1px solid #3a4a62;
+            border-radius: 9px;
+            color: #f8fafc;
+            font: inherit;
+            font-size: 14px;
+        }
+
+        input::placeholder {
+            color: #8190a5;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #8290ff;
+            box-shadow: 0 0 0 3px rgba(100, 124, 245, 0.13);
+        }
+
+        select option {
+            background: #182337;
+        }
+
+        .hint {
+            display: block;
+            color: #9ba9bd;
+            font-size: 11px;
+            margin-top: 6px;
+        }
+
+        .submit-button {
+            width: 100%;
+            margin-top: 25px;
+            border: none;
+            font-family: inherit;
+        }
+
+        .info-panel {
+            background: linear-gradient(150deg, #272850, #20233d);
+        }
+
+        .info-panel .big-icon {
+            font-size: 36px;
+            margin-bottom: 15px;
+        }
+
+        .info-panel h3 {
+            font-size: 21px;
+        }
+
+        .info-panel p {
+            color: #c0c6df;
+            font-size: 13px;
+            margin: 12px 0 18px;
+        }
+
+        .info-list {
+            list-style: none;
+        }
+
+        .info-list li {
+            padding: 12px 0;
+            border-top: 1px solid #42415e;
+            color: #e1e5f4;
+            font-size: 13px;
+        }
+
+        .result-card {
+            margin: 0 auto 30px;
+            padding: 28px;
+            background: #1b2739;
+            border: 1px solid #526187;
+            border-radius: 18px;
+            scroll-margin-top: 90px;
+        }
+
+        .result-card h2 {
+            font-size: 25px;
+            margin-bottom: 8px;
+        }
+
+        .result-subtitle {
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .chance-number {
+            color: #94a5ff;
+            font-size: 48px;
+            font-weight: 850;
+            margin: 8px 0;
+        }
+
+        .progress-track {
+            width: 100%;
+            height: 13px;
+            background: #354257;
+            border-radius: 20px;
+            overflow: hidden;
+            margin: 10px 0 18px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #607cf4, #a15ce0);
+            border-radius: 20px;
+        }
+
+        .result-status {
+            display: inline-block;
+            padding: 7px 13px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
+
+        .likely {
+            background: #174e45;
+            color: #8af0cb;
+        }
+
+        .unlikely {
+            background: #562c3b;
+            color: #ffb5c4;
+        }
+
+        .result-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 12px 0 18px;
+        }
+
+        .detail {
+            padding: 8px 12px;
+            background: #28364b;
+            border: 1px solid #3a4960;
+            border-radius: 8px;
+            font-size: 12px;
+            color: #e0e8f5;
+        }
+
+        .notice {
+            padding: 13px;
+            background: #3b3424;
+            color: #f4d89b;
+            border-radius: 9px;
+            font-size: 12px;
+        }
+
+        .contact-section {
+            text-align: center;
+            border-top: 1px solid #2a374a;
+        }
+
+        footer {
+            text-align: center;
+            padding: 25px 6%;
+            color: #9ba9bd;
+            background: #0c1424;
+            border-top: 1px solid #26344a;
+            font-size: 12px;
+        }
+
+        @media (max-width: 850px) {
+            .hero {
+                grid-template-columns: 1fr;
+                gap: 38px;
+                padding-top: 55px;
+            }
+
+            .hero-content {
+                max-width: 650px;
+            }
+
+            .features {
+                max-width: 650px;
+                width: 100%;
+            }
+
+            .assessment-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .navbar {
+                height: auto;
+                min-height: 65px;
+                padding: 14px 5%;
+                flex-wrap: wrap;
+                gap: 12px;
+            }
+
+            .brand {
+                font-size: 17px;
+            }
+
+            .nav-links {
+                gap: 15px;
+                flex-wrap: wrap;
+            }
+
+            .nav-links a {
+                font-size: 11px;
+            }
+
+            .hero {
+                padding: 45px 5%;
+            }
+
+            .hero h1 {
+                font-size: 39px;
+            }
+
+            .stats {
+                gap: 7px;
+            }
+
+            .stat-number {
+                font-size: 19px;
+            }
+
+            .stat-label {
+                font-size: 10px;
+            }
+
+            .section {
+                padding: 50px 5%;
+            }
+
+            .panel, .result-card {
+                padding: 20px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .field.full {
+                grid-column: auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar" id="home">
+        <div class="brand">
+            <span class="brand-icon">🎓</span>
+            PlacementPredictor
+        </div>
+
+        <div class="nav-links">
+            <a href="#home">Home</a>
+            <a href="#about">About</a>
+            <a href="#analytics">Analytics</a>
+            <a href="#predict">Predict</a>
+            <a href="#contact">Contact</a>
+        </div>
+    </nav>
+
+    <section class="hero">
+
+        <div class="hero-content">
+            <span class="eyebrow">AI-POWERED PLACEMENT SYSTEM</span>
+
+            <h1>
+                Predict Your<br>
+                <span class="gradient-text">Placement Success</span>
+            </h1>
+
+            <p class="hero-description">
+                Explore your placement outlook using Machine Learning.
+                Enter your academic performance, aptitude, communication
+                skills, internship experience and projects to generate
+                a model-based prediction.
+            </p>
+
+            <div class="stats" id="analytics">
+                <div class="stat-card">
+                    <div class="stat-number">ML</div>
+                    <div class="stat-label">Prediction Model</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-number">5</div>
+                    <div class="stat-label">Student Inputs</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-number">AI</div>
+                    <div class="stat-label">Career Insights</div>
+                </div>
+            </div>
+
+            <div class="hero-buttons">
+                <a href="#predict" class="btn btn-primary">
+                    ↗ &nbsp; START PREDICTION
+                </a>
+
+                <a href="#about" class="btn btn-outline">
+                    Learn More
+                </a>
+            </div>
+        </div>
+
+        <div class="features" id="about">
+
+            <div class="feature-card">
+                <div class="feature-icon">🧠</div>
+                <div>
+                    <h3>AI-Powered Analysis</h3>
+                    <p>Student data processed by a trained ML model</p>
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <div>
+                    <h3>Placement Prediction</h3>
+                    <p>View the model's estimated placement score</p>
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🎓</div>
+                <div>
+                    <h3>Career Development</h3>
+                    <p>Explore academic and practical skill factors</p>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <main class="section" id="predict">
+
+        <div class="section-heading">
+            <span class="eyebrow">STUDENT ASSESSMENT</span>
+            <h2>Check Your Placement Outlook</h2>
+            <p>Enter your details below to receive a model-generated prediction.</p>
+        </div>
+
+        {% if prediction_text %}
+        <section class="result-card" id="result">
+            <h2>Your Prediction Result</h2>
+            <p class="result-subtitle">Estimated placement score</p>
+
+            <div class="chance-number">{{ placement_chance }}%</div>
+
+            <div class="progress-track">
+                <div class="progress-fill"
+                     style="width: {{ placement_chance }}%;">
+                </div>
+            </div>
+
+            <div class="result-status {{ 'likely' if prediction_text == 'Placement Likely' else 'unlikely' }}">
+                {{ prediction_text }}
+            </div>
+
+            <div class="result-details">
+                <div class="detail">CGPA: {{ cgpa }}</div>
+                <div class="detail">Aptitude: {{ aptitude }}</div>
+                <div class="detail">Communication: {{ communication }}</div>
+                <div class="detail">Internship: {{ "Yes" if internship == 1 else "No" }}</div>
+                <div class="detail">Projects: {{ projects }}</div>
+            </div>
+
+            <p class="notice">
+                This percentage is a model-generated estimate, not a
+                guaranteed real-world placement probability. The current
+                project uses a small synthetic dataset for demonstration.
+            </p>
+        </section>
+        {% endif %}
+
+        <div class="assessment-grid">
+
+            <section class="panel">
+                <h3>Student Details</h3>
+                <p class="panel-description">
+                    Complete all fields to generate your prediction.
+                </p>
+
+                <form action="/predict" method="POST">
+                    <div class="form-grid">
+
+                        <div class="field">
+                            <label for="cgpa">CGPA</label>
+                            <input
+                                type="number"
+                                id="cgpa"
+                                name="cgpa"
+                                min="0"
+                                max="10"
+                                step="0.01"
+                                placeholder="Example: 8.2"
+                                required>
+                            <span class="hint">Enter a value from 0 to 10.</span>
+                        </div>
+
+                        <div class="field">
+                            <label for="aptitude_score">Aptitude Score</label>
+                            <input
+                                type="number"
+                                id="aptitude_score"
+                                name="aptitude_score"
+                                min="0"
+                                max="100"
+                                step="0.1"
+                                placeholder="Example: 75"
+                                required>
+                            <span class="hint">Enter a score from 0 to 100.</span>
+                        </div>
+
+                        <div class="field">
+                            <label for="communication_skill">Communication Skill</label>
+                            <input
+                                type="number"
+                                id="communication_skill"
+                                name="communication_skill"
+                                min="1"
+                                max="10"
+                                step="0.1"
+                                placeholder="Example: 7"
+                                required>
+                            <span class="hint">Scale: 1 to 10.</span>
+                        </div>
+
+                        <div class="field">
+                            <label for="internship">Internship Completed?</label>
+                            <select id="internship" name="internship" required>
+                                <option value="1">Yes</option>
+                                <option value="0">No</option>
+                            </select>
+                        </div>
+
+                        <div class="field full">
+                            <label for="projects">Number of Projects</label>
+                            <input
+                                type="number"
+                                id="projects"
+                                name="projects"
+                                min="0"
+                                max="20"
+                                step="1"
+                                placeholder="Example: 3"
+                                required>
+                            <span class="hint">Enter a whole number from 0 to 20.</span>
+                        </div>
+
+                    </div>
+
+                    <button type="submit" class="btn btn-primary submit-button">
+                        Generate Placement Prediction →
+                    </button>
+                </form>
+            </section>
+
+            <aside class="panel info-panel">
+                <div class="big-icon">🚀</div>
+                <h3>Build Your Career Profile</h3>
+
+                <p>
+                    Understand how different student attributes are used
+                    by the placement prediction model.
+                </p>
+
+                <ul class="info-list">
+                    <li>✓ Academic performance</li>
+                    <li>✓ Aptitude assessment</li>
+                    <li>✓ Communication skills</li>
+                    <li>✓ Internship experience</li>
+                    <li>✓ Academic and personal projects</li>
+                </ul>
+            </aside>
+
+        </div>
+    </main>
+
+    <section class="section contact-section" id="contact">
+        <div class="section-heading">
+            <h2>Plan Your Next Step</h2>
+            <p>
+                Use this educational project to explore the relationship
+                between student skills and placement outcomes.
+            </p>
+            <br>
+            <a href="#predict" class="btn btn-primary">Try Prediction Again</a>
+        </div>
+    </section>
+
+    <footer>
+        PlacementPredictor | Student Placement Prediction System
+        <br>
+        Built with Python, Flask, HTML, CSS and Machine Learning
+    </footer>
+
+</body>
+</html>
